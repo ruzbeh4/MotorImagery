@@ -205,3 +205,41 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# =========================
+# Custom ML Project Additions
+# =========================
+
+# 1. Data and Datasets (CRITICAL)
+# Never commit raw or processed data to the repository.
+data/
+*.mat
+*.csv
+*.h5
+*.npy
+*.npz
+
+# 2. Saved Models
+# Ignore trained weights and models so they don't bloat the repo.
+models/
+*.pkl
+*.joblib
+*.pt
+*.pth
+
+# 3. OS Generated Files
+# Prevents conflicts when switching between Windows and Linux environments.
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+.DS_Store?
+.Trash-*
+
+# 4. Editor / IDE Settings
+# Prevents overriding your teammate's local editor configurations.
+.vscode/
+.idea/
+*.swp
+*.swo
