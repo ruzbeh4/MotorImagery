@@ -4,6 +4,8 @@ from scipy.signal import butter, filtfilt
 from sklearn.model_selection import train_test_split
 from scipy.signal import welch
 import matplotlib.pyplot as plt
+from mne.decoding import CSP
+from sklearn.manifold import TSNE
 
 
 def load_and_window_data(filepath, fs=100, window_sec=(0.5, 3.5)):
@@ -34,9 +36,12 @@ def load_and_window_data(filepath, fs=100, window_sec=(0.5, 3.5)):
         X[i, :, :] = cnt[start_pos + start_sample : start_pos + end_sample, :].T
         
     # Keep only the Left Hand and Foot
-    valid_trials = (y == 1) | (y == 2)
+    valid_trials = (y == 1) | (y == -1)
     X = X[valid_trials]
     y = y[valid_trials]
+
+    # Standardize labels for the Classifier 
+    y[y == -1] = 0
     
     return X, y
 
@@ -46,6 +51,7 @@ def split_data(X, y):
     Splits data into 75% train and 25% test.
     """
     return train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
+
 
 
 def apply_bandpass_filter(X, fs=100, lowcut=8.0, highcut=30.0, order=4):
@@ -82,3 +88,23 @@ def plot_psd_comparison(raw_X, filtered_X, fs=100, channel_idx=0):
     plt.grid(True, which='both', linestyle='--', alpha=0.5)
     plt.legend()
     plt.show()
+
+
+def apply_csp(X_train, y_train, X_test, n_components=4):
+    """
+    Fits CSP on training data and transforms both train and test sets.
+    """
+    csp = CSP(n_components=n_components, reg=None, log=True, norm_trace=False)
+    
+    X_train_csp = csp.fit_transform(X_train, y_train)
+    X_test_csp = csp.transform(X_test)
+    
+    return X_train_csp, X_test_csp, csp
+
+def compute_tsne_projection(X_train_filtered, X_train_csp):
+    """
+    Computes 2D projections for scatter plots[cite: 53].
+    """
+    X_flat = X_train_filtered.reshape(X_train_filtered.shape[0], -1)
+    tsne = TSNE(n_components=2, random_state=42)
+    return tsne.fit_transform(X_flat), tsne.fit_transform(X_train_csp)
