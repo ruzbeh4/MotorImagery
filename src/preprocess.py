@@ -108,3 +108,20 @@ def compute_tsne_projection(X_train_filtered, X_train_csp):
     X_flat = X_train_filtered.reshape(X_train_filtered.shape[0], -1)
     tsne = TSNE(n_components=2, random_state=42)
     return tsne.fit_transform(X_flat), tsne.fit_transform(X_train_csp)
+
+import os
+
+def save_processed_data(X_train, X_test, y_train, y_test, folder='../data'):
+    """
+    Saves the CSP-transformed features and labels for use in the next notebook.
+    """
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        
+    # Save as NumPy files
+    np.save(os.path.join(folder, 'X_train_csp.npy'), X_train)
+    np.save(os.path.join(folder, 'X_test_csp.npy'), X_test)
+    np.save(os.path.join(folder, 'y_train.npy'), y_train)
+    np.save(os.path.join(folder, 'y_test.npy'), y_test)
+    
+    print(f"Successfully saved processed data to {folder}")
