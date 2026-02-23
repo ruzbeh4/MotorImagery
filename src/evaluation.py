@@ -4,7 +4,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.metrics import roc_curve, auc
 import numpy as np
 
-def load_processed_data(folder='../data'):
+def load_processed_data(folder='../data/c'):
     # load 
     X_train = np.load(f'{folder}/X_train_csp.npy')
     y_train = np.load(f'{folder}/y_train.npy')
